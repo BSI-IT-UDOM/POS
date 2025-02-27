@@ -36,10 +36,12 @@
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group " onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='role/destroy/{{$role->R_id}}'; }">
-                  <i class="fas fa-trash-alt fa-xs"></i>
-                  <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" >Delete</span>
+                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"
+                    onclick="deleteRole({{ $role->R_id }})">
+                    <i class="fas fa-trash-alt fa-xs"></i>
+                    <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
                 </button>
+            
                 <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"
                   onclick="toggleActive(this, {{ $role->R_id }})"
                   onmouseover="setHover(this, true)"
@@ -61,7 +63,7 @@
   @include('popups.create-role-popup')
   @include('popups.edit-role-popup')
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
@@ -75,6 +77,22 @@
     document.getElementById('editRoleForm').action = `/role/${R_id}`;
 
     document.getElementById('editRolePopup').classList.remove('hidden');
+}
+function deleteRole(roleId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with the deletion
+            window.location.href = '/role/destroy/' + roleId;
+        }
+    });
 }
 
 function toggleActive(button, materialId) {

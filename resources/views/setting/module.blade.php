@@ -4,210 +4,36 @@
 <div class="max-w-screen-lg mx-auto p-6 space-y-4 bg-gray-100 border-2 mb-2">
     <div class="container mx-auto p-4">
         <div class="overflow-hidden rounded-lg shadow-lg bg-white">
-            <form action="#">
+            <form action="{{ route('module.store') }}" method="POST">
+                @csrf
                 <table class="min-w-full bg-white border border-zinc-200">
                     <thead>
                         <tr class="bg-zinc-100">
                             <th class="p-4 border-b border-zinc-200 text-left">Module</th>
-                            <th class="p-4 border-b border-zinc-200 bg-green-500 text-white">Admin</th>
-                            <th class="p-4 border-b border-zinc-200 bg-red-500 text-white">Owner</th>
-                            <th class="p-4 border-b border-zinc-200 bg-blue-500 text-white">Inventory</th>
-                            <th class="p-4 border-b border-zinc-200 bg-yellow-500 text-white">Seller</th>
+                            @foreach ($roles as $role)
+                                <th class="p-4 border-b border-zinc-200 text-white bg-{{ $role->R_type == 'Admin' ? 'green' : ($role->R_type == 'Owner' ? 'red' : ($role->R_type == 'Inventory' ? 'blue' : 'yellow')) }}-500">{{ $role->R_type }}</th>
+                            @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dashboard Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Dashboard</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="dashboard-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="dashboard-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="dashboard-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="dashboard-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Inventory Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">Inventory</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="inventory-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="inventory-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="inventory-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="inventory-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Suppliers Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Suppliers</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="suppliers-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="suppliers-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="suppliers-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="suppliers-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Items Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">Items</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="items-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="items-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="items-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="items-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Orders Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Orders</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="orders-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="orders-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="orders-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="orders-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- POS Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">POS</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="pos-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="pos-owner" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="pos-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="pos-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Products Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Products</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="products-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="products-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="products-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="products-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Add-ons Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">Add-ons</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="addons-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="addons-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="addons-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="addons-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Sales Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Sales</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="sales-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="sales-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="sales-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="sales-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Reports Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">Reports</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="reports-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="reports-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="reports-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="reports-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Accounting Module -->
-                        <tr>
-                            <td class="p-4 border-b border-zinc-200">Accounting</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="accounting-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="accounting-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="accounting-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="accounting-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
-                        <!-- Settings Module -->
-                        <tr class="bg-zinc-100">
-                            <td class="p-4 border-b border-zinc-200">Settings</td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="settings-admin" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="settings-owner" checked class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="settings-inventory" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                            <td class="p-4 border-b border-zinc-200 text-center">
-                                <input type="checkbox" name="settings-seller" class="form-checkbox w-4 h-4 text-teal-500">
-                            </td>
-                        </tr>
+                        @foreach ($sysModules as $sysModule)
+                            <tr>
+                                <td class="p-4 border-b border-zinc-200">{{ $sysModule->SM_name }}</td>
+                                @foreach ($roles as $role)
+                                    @php
+                                        $permission = $sysModule->modules->firstWhere('R_id', $role->R_id);
+                                    @endphp
+                                    <td class="p-4 border-b border-zinc-200 text-center">
+                                        <input type="hidden" name="permissions[{{ $sysModule->SM_id }}][{{ $role->R_id }}][enabled]" value="0">
+                                        <input type="checkbox" 
+                                               name="permissions[{{ $sysModule->SM_id }}][{{ $role->R_id }}][enabled]" 
+                                               value="1" 
+                                               class="form-checkbox w-4 h-4 text-teal-500"
+                                               {{ $permission && $permission->status == '1' ? 'checked' : '' }}>
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
                 <div class="text-end mt-6 mr-2 mb-2">
@@ -217,5 +43,4 @@
         </div>
     </div>
 </div>
-
 @endsection

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Module;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InvRole extends Model
 {
@@ -18,4 +19,9 @@ class InvRole extends Model
         'R_type',
         'status'
     ];
+
+    public function modules()
+    {
+        return $this->hasMany(Module::class, 'R_id', 'R_id');
+    }
 }

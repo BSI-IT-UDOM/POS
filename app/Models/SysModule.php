@@ -16,14 +16,13 @@ class SysModule extends Model
     protected $keyType = 'int'; 
     protected $fillable = [
         'SM_name',
-        'R_id',
         'SM_label',
-        'SM_name',
         'SM_image',
         'status'
     ];
-    public function Module()
+
+    public function modules()
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Module::class, 'SM_id', 'SM_id');
     }
 }

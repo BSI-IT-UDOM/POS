@@ -276,7 +276,8 @@ Route::post('/size/{id}/toggle-status', [SettingController::class, 'SizetoggleSt
 
 //-------------------------------------------------------MODULE PAGE-------------------------------------------------------
 //display module information
-Route::get('/module', [SettingController::class, 'module'])->name('module');
+Route::get('/module', [SettingController::class, 'indexModule'])->name('module.index'); // For displaying the page
+Route::post('/module/store', [SettingController::class, 'store'])->name('module.store'); // For storing the form data
 //update existing module
 
 

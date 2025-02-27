@@ -54,7 +54,7 @@
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='material/destroy/{{$data->Material_id}}'; }">
+                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" onclick="confirmDelete({{ $data->Material_id }})">
                   <i class="fas fa-trash-alt fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
                 </button>
@@ -83,6 +83,7 @@
   @include('popups.edit-material-popup')
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
   $('#searchInput').keypress(function() {
@@ -96,69 +97,89 @@
         }
       });
 });
-    function openEditPopup(Material_id, Material_Khname, Material_Engname, Material_Cate_Khname, image) {
-      document.getElementById('editMaterial_id').value = Material_id;
-      document.getElementById('editMaterial_Khname').value = Material_Khname;
-      document.getElementById('editMaterial_Engname').value = Material_Engname;
-      document.getElementById('editMaterial_Cate_Khname').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const uomName = selectedOption.getAttribute('data-uom-name');
-      });
-      const imagePreview = document.getElementById('imagePreview');
-      if (image) {
-        imagePreview.src = `/storage/${image}`;
-        imagePreview.classList.remove('hidden');
-      } else {
-        imagePreview.src = '';
-        imagePreview.classList.add('hidden');
-      }
-      document.getElementById('editMaterialForm').action = `/material_update/${Material_id}`;
-      document.getElementById('editMaterialPopup').classList.remove('hidden');
+function openEditPopup(Material_id, Material_Khname, Material_Engname, Material_Cate_Khname, image) {
+  document.getElementById('editMaterial_id').value = Material_id;
+  document.getElementById('editMaterial_Khname').value = Material_Khname;
+  document.getElementById('editMaterial_Engname').value = Material_Engname;
+  document.getElementById('editMaterial_Cate_Khname').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const uomName = selectedOption.getAttribute('data-uom-name');
+  });
+  const imagePreview = document.getElementById('imagePreview');
+  if (image) {
+    imagePreview.src = `/storage/${image}`;
+    imagePreview.classList.remove('hidden');
+  } else {
+    imagePreview.src = '';
+    imagePreview.classList.add('hidden');
+  }
+  document.getElementById('editMaterialForm').action = `/material_update/${Material_id}`;
+  document.getElementById('editMaterialPopup').classList.remove('hidden');
 }
-    const createButton = document.getElementById('createMaterialButton');
-    const popupForm = document.getElementById('createMaterialPopup');
-    createButton.addEventListener('click', function() {
-      popupForm.classList.remove('hidden');
-    });
+const createButton = document.getElementById('createMaterialButton');
+const popupForm = document.getElementById('createMaterialPopup');
+createButton.addEventListener('click', function() {
+  popupForm.classList.remove('hidden');
+});
+
+function confirmDelete(materialId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = '/material/destroy/' + materialId;
+    }
+  });
+}
+
 function toggleActive(button, materialId) {
     const icon = button.querySelector('i');
     const currentStatus = icon.classList.contains('fa-toggle-on') ? 'Active' : 'Inactive';
     const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-    fetch(`/material/${materialId}/toggle-status`, {
+    $.ajax({
+        url: '/material/status/update',
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            material_id: materialId,
+            status: newStatus,
         },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+        success: function() {
             if (newStatus === 'Active') {
-                icon.classList.replace('fa-toggle-off', 'fa-toggle-on');
-                button.style.backgroundColor = '#008000'; 
+                icon.classList.remove('fa-toggle-off');
+                icon.classList.add('fa-toggle-on');
+                button.style.backgroundColor = '#008000';
             } else {
-                icon.classList.replace('fa-toggle-on', 'fa-toggle-off');
-                button.style.backgroundColor = '#f00'; 
+                icon.classList.remove('fa-toggle-on');
+                icon.classList.add('fa-toggle-off');
+                button.style.backgroundColor = '#f00';
             }
-        } else {
-            alert("Unable to change status.");
+        },
+        error: function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an issue updating the status.',
+            });
         }
-    })
-    .catch(error => console.error('Error:', error));
+    });
 }
 function setHover(button, isHover) {
     const icon = button.querySelector('i');
     const statusText = button.querySelector('span');
-    if (icon.classList.contains('fa-toggle-on')) {
-        button.style.backgroundColor = isHover ? '#006400' : '#008000';
-        statusText.textContent = 'Active';
+    if (isHover) {
+        icon.style.color = '#fff';
+        statusText.style.opacity = '1';
     } else {
-        button.style.backgroundColor = isHover ? '#a11' : '#f00';
-        statusText.textContent = 'Inactive';
+        icon.style.color = '';
+        statusText.style.opacity = '0';
     }
 }
 </script>
 @endsection
-

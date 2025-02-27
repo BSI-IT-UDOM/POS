@@ -61,10 +61,12 @@
                 <i class="fas fa-edit fa-xs"></i>
                 <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
             </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='order/destroy/{{$data->Order_Info_id}}'; }">
-                  <i class="fas fa-trash-alt fa-xs"></i>
-                  <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
-                </button>
+            <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group delete-order" 
+                data-url="{{ url('order/destroy/'.$data->Order_Info_id) }}">
+                <i class="fas fa-trash-alt fa-xs"></i>
+                <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
+            </button>
+        
               </td>
             </tr>
             @endforeach
@@ -92,6 +94,7 @@
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $('#searchForm').on('submit', function(event) {
       event.preventDefault();
@@ -105,14 +108,28 @@
         }
       });
     });
-    // Display related records when hovering over a row
+    $(document).on('click', '.delete-order', function(event) {
+        event.preventDefault();
+        let deleteUrl = $(this).data('url');
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
+    });
     document.querySelectorAll('.order-row').forEach(row => {
         row.addEventListener('mouseenter', function() {
             let orderId = this.getAttribute('data-order-id');
             let detailsElement = document.getElementById(`itemDetails-${orderId}`);
-            // Clear existing details
             detailsElement.innerHTML = '';
-            // Filter and display related items
             @foreach ($groupedOrders as $orderId => $orders)
                 if (orderId == '{{ $orderId }}') {
                     let html = '';

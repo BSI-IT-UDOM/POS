@@ -39,7 +39,7 @@
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='supplier/destroy/{{$data->Sup_id}}'; }">
+                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" onclick="deleteSupplier({{ $data->Sup_id }})">
                   <i class="fas fa-trash-alt fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
                 </button>
@@ -69,6 +69,7 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   $('#searchForm').on('submit', function(event) {
     event.preventDefault();
@@ -83,6 +84,22 @@
       }
     });
   });
+
+  function deleteSupplier(id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/supplier/destroy/${id}`;
+      }
+    });
+  }
   function openEditPopup(Sup_id, Sup_name, Sup_contact, Sup_address) {
     document.getElementById('editSupId').value = Sup_id;
     document.getElementById('editSupName').value = Sup_name;
@@ -92,52 +109,16 @@
     document.getElementById('editPopup').classList.remove('hidden');
   }
 
-    const createButton = document.getElementById('createButton');
-    const popupForm = document.getElementById('popupSupplier');
-    createButton.addEventListener('click', () => {
-      popupForm.classList.remove('hidden');
-    });
-    document.getElementById('cancelEdit').addEventListener('click', function() {
-        document.getElementById('editPopup').classList.add('hidden');
-    });
+  const createButton = document.getElementById('createButton');
+  const popupForm = document.getElementById('popupSupplier');
+  createButton.addEventListener('click', () => {
+    popupForm.classList.remove('hidden');
+  });
+  document.getElementById('cancelEdit').addEventListener('click', function() {
+    document.getElementById('editPopup').classList.add('hidden');
+  });
 
-    function toggleActive(button) {
-    // Toggle the active state
-    if (button.classList.contains('active')) {
-        // Change to inactive state
-        console.log(123);       
-        button.classList.remove('active');
-        button.style.backgroundColor = '#FF0000'; // Red color for inactive
-        button.innerHTML = '<i class="fas fa-toggle-off fa-xs"></i>';
-    } else {
-      console.log(678);       
-
-        // Change to active state
-        button.classList.add('active');
-        button.style.backgroundColor = '#008000'; // Green color for active
-        button.innerHTML = '<i class="fas fa-toggle-on fa-xs"></i>';
-    }
-}
-
-
-    function toggleActive(button) {
-    // Toggle the active state
-    if (button.classList.contains('active')) {
-        // Change to inactive state
-        console.log(123);       
-        button.classList.remove('active');
-        button.style.backgroundColor = '#FF0000'; // Red color for inactive
-        button.innerHTML = '<i class="fas fa-toggle-off fa-xs"></i>';
-    } else {
-      console.log(678);       
-
-        // Change to active state
-        button.classList.add('active');
-        button.style.backgroundColor = '#008000'; // Green color for active
-        button.innerHTML = '<i class="fas fa-toggle-on fa-xs"></i>';
-    }
-}
-function toggleActive(button, materialId) {
+  function toggleActive(button, materialId) {
     const icon = button.querySelector('i');
     const currentStatus = icon.classList.contains('fa-toggle-on') ? 'Active' : 'Inactive';
     const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
@@ -165,10 +146,9 @@ function toggleActive(button, materialId) {
         }
     })
     .catch(error => console.error('Error:', error));
-}
+  }
 
-
-function setHover(button, isHover) {
+  function setHover(button, isHover) {
     const icon = button.querySelector('i');
     const statusText = button.querySelector('span');
     

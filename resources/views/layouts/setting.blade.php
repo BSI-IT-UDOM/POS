@@ -8,10 +8,30 @@ $navItems = [
     ['route' => 'menu', 'label' => 'MENU', 'roles' => [1, 2, 4]],
     ['route' => 'employee', 'label' => 'EMPLOYEE', 'roles' => [1, 2]],
     ['route' => 'expense', 'label' => 'EXPENSE', 'roles' => [1, 2]],
-    ['route' => 'report', 'label' => 'REPORT', 'roles' => [1, 2]],
+    ['route' => 'report.index', 'label' => 'REPORT', 'roles' => [1, 2]],
     ['route' => 'profit_lose', 'label' => 'PROFIT / LOSE', 'roles' => [1, 2]],
     ['route' => 'setting', 'label' => 'SETTING', 'roles' => [1, 2]],
 ];
+$user = Auth::user();
+$modules = $user->InvRole->modules ?? collect();
+
+$modulesData = $modules->map(function ($module) {
+    return $module->only(['status', 'SM_id']); 
+});
+$modulesWithSysModule = $modules->map(function ($module) {
+    return $module->SysModule->only(['SM_label', 'SM_id', 'status']);
+});
+$modulesDataWithLabel = $modulesData->map(function ($module, $index) use ($modulesWithSysModule) {
+    $module['SM_label'] = isset($modulesWithSysModule[$index]['SM_label']) 
+        ? strtolower($modulesWithSysModule[$index]['SM_label']) 
+        : null; 
+    return $module;
+});
+$activeModules = $modulesDataWithLabel->filter(function ($module) {
+    return $module['status'] == 1;
+});
+
+$currentRoute = Route::currentRouteName();
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -116,12 +136,12 @@ $navItems = [
         @else
             <div id="navMenu" class="flex flex-wrap justify-center space-x-2 hidden md:flex">
                 @foreach($navItems as $item)
-                    @if(in_array(Auth::user()->InvRole->R_id, $item['roles']))
-                        <a href="{{ $item['route'] }}" class="{{ request()->is($item['route']) ? 'bg-primary text-white text-' : 'bg-bsicolor text-white' }} rounded-lg px-4 py-2 text-sm mb-2 font-bold">
-                            {{ $item['label'] }}
-                        </a>
-                    @endif
-                @endforeach
+                @if(in_array($user->InvRole->R_id, $item['roles']) || $activeModules->contains('SM_label', strtolower($item['label'])))
+                    <a href="{{ route($item['route']) }}" class="{{ $currentRoute == $item['route'] ? 'bg-primary text-white' : 'bg-bsicolor text-white' }} rounded-lg px-4 py-2 text-sm mb-2 font-bold">
+                        {{ $item['label'] }}
+                    </a>
+                @endif
+            @endforeach
             </div>
             <div id="menuLine" class="h-1 bg-gray-500 rounded-sm"></div>
         @endif
@@ -189,7 +209,7 @@ $navItems = [
                         <a href="/menu_group" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('menu_group') ? 'bg-bsicolor text-white' : '' }}">
                             <i class="fas fa-cube mr-2"></i> GROUP
                         </a>
-                        <a href="/menu_category" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('menu_category') ? 'bg-bsicolor text-white' : '' }}">
+                        <a href="/menu_category" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('menuCat') ? 'bg-bsicolor text-white' : '' }}">
                             <i class="fas fa-tags mr-2"></i> CATEGORY
                         </a>
                         <a href="/ingredient" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('ingredient') ? 'bg-bsicolor text-white' : '' }}">
@@ -243,10 +263,10 @@ $navItems = [
                         <i class="fas fa-chevron-down ml-auto" id="icon-pos-info"></i>
                     </p>
                     <div id="pos-info" class="submenu hidden pl-4">
-                        <a href="/table_setting" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('table') ? 'bg-bsicolor text-white' : '' }}">
+                        <a href="/table_setting" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('getTable') ? 'bg-bsicolor text-white' : '' }}">
                             <i class="fas fa-table mr-2"></i> TABLE
                         </a>
-                        <a href="/menu_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('table') ? 'bg-bsicolor text-white' : '' }}">
+                        <a href="/menu_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('getMenuDetail') ? 'bg-bsicolor text-white' : '' }}">
                             <i class="fas fa-utensils mr-2"></i> MENU DETAIL
                         </a>
                         <!-- Discount Section with Nested Dropdown -->
@@ -256,10 +276,10 @@ $navItems = [
                                 <i class="fas fa-chevron-down ml-auto" id="icon-discount-info"></i>
                             </a>
                             <div id="discount-info" class="submenu hidden pl-4">
-                                <a href="/discount_type" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1">
+                                <a href="/discount_type" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1  {{ request()->routeIs('getDiscount') ? 'bg-bsicolor text-white' : '' }}">
                                     <i class="fas fa-percentage mr-2"></i> DISCOUNT TYPE
                                 </a>
-                                <a href="/discount_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1">
+                                <a href="/discount_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('getDiscountDetail') ? 'bg-bsicolor text-white' : '' }}">
                                     <i class="fas fa-file-alt mr-2"></i> DISCOUNT DETAIL
                                 </a>
                             </div>
@@ -271,10 +291,10 @@ $navItems = [
                                 <i class="fas fa-chevron-down ml-auto" id="icon-promotion-info"></i>
                             </a>
                             <div id="promotion-info" class="submenu hidden pl-4">
-                                <a href="/promotion_type" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1">
+                                <a href="/promotion_type" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('getPromotionType') ? 'bg-bsicolor text-white' : '' }}">
                                     <i class="fas fa-bullhorn mr-2"></i> PROMOTION TYPE
                                 </a>
-                                <a href="/promotion_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1">
+                                <a href="/promotion_detail" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('getPromotionDetail') ? 'bg-bsicolor text-white' : '' }}">
                                     <i class="fas fa-bullhorn mr-2"></i> PROMOTION DETAIL
                                 </a>
                             </div>
@@ -291,7 +311,7 @@ $navItems = [
                         <i class="fas fa-chevron-down ml-auto" id="icon-module-info"></i>
                     </p>
                     <div id="module-info" class="submenu hidden pl-4">
-                        <a href="/module" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('module') ? 'bg-bsicolor text-white' : '' }}">
+                        <a href="/module" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('module.index') ? 'bg-bsicolor text-white' : '' }}">
                             <i class="fas fa-cogs mr-2"></i> SYSTEM MODULE
                         </a>
                         <a href="#" class="nav-link flex items-center py-2 px-4 hover:bg-bsicolor hover:text-white rounded-lg my-1 {{ request()->routeIs('authentication') ? 'bg-bsicolor text-white' : '' }}">

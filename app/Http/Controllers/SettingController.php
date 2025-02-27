@@ -4,42 +4,15 @@ namespace App\Http\Controllers;
 
 
 
-use App\Models\pos\DiscountDetail;
-
-use App\Models\pos\Discount;
-
-use App\Models\pos\MenuDetail;
-
-use App\Models\pos\POSOrder;
-
-use App\Models\pos\POSOrderDetail;
-
-use App\Models\pos\Promotion;
-
-use App\Models\pos\PromotionDetail;
-
-use App\Models\pos\PromotionType;
-
-use App\Models\pos\Table;
-use App\Models\LoginInfo;
-
-use App\Models\invSize;
-
-use App\Models\Position;
-
-use App\Models\PaymentMethod;
-
-use App\Models\PaymentCate;
-
-use App\Models\OperationLog;
-
-use App\Models\Addon;
-use App\Models\Employee;
 use App\Models\UOM;
+
+use App\Models\Menu;
 
 use App\Models\User;
 
-use App\Models\Material;
+use App\Models\Addon;
+
+use App\Models\Income;
 
 use App\Models\Module;
 
@@ -47,46 +20,74 @@ use App\Models\InvRole;
 
 use App\Models\Invshop;
 
+use App\Models\invSize;
 use App\Models\Setting;
 
 use App\Models\Currency;
 
-use App\Models\Menu;
+use App\Models\Employee;
+
+use App\Models\InvOwner;
+
+use App\Models\Material;
+
+use App\Models\Position;
+
+use App\Models\LoginInfo;
+use App\Models\MenuGroup;
+use App\Models\pos\Table;
 
 use App\Models\SysModule;
 
-use App\Models\ExpenseCate;
-
-use App\Models\Income;
-
 use App\Models\IncomeCate;
+
+use App\Models\ExpenseCate;
 
 use App\Models\InvLocation;
 
+use App\Models\invMenuCate;
+
+use App\Models\PaymentCate;
+
 use App\Models\IngredientRe;
 
-use App\Models\MenuGroup;
+use App\Models\OperationLog;
+
+use App\Models\pos\Discount;
+
+use App\Models\pos\POSOrder;
 
 use Illuminate\Http\Request;
 
 use App\Models\IngredientQty;
 
-use App\Models\MaterialCategory;
-
 use App\Models\MaterialGroup;
 
-use App\Models\invMenuCate;
+use App\Models\PaymentMethod;
+
+use App\Models\pos\Promotion;
+
+use App\Models\pos\MenuDetail;
 
 use App\Models\MenuIngredients;
 
-use App\Http\Controllers\Controller;
+use App\Models\MaterialCategory;
 
-use App\Models\InvOwner;
+use App\Models\pos\PromotionType;
+
+use App\Models\pos\DiscountDetail;
+
+use App\Models\pos\POSOrderDetail;
+
+use App\Models\pos\PromotionDetail;
+
+use Illuminate\Support\Facades\Log;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Support\Facades\Storage;
 
 
@@ -214,7 +215,6 @@ class SettingController extends Controller
     public function ShopOperation(Request $request)
 
     {
-
         $shop = Auth::user()->invShop->O_id;
 
         // Validate the input data
@@ -383,7 +383,6 @@ class SettingController extends Controller
     public function update(Request $request, $S_id)
 
     {
-
         // Validate the input data
 
         $validatedData = $request->validate([
@@ -3522,11 +3521,31 @@ class SettingController extends Controller
     
 
     //-----------------------------------------MODULE SECTION-----------------------------------------
-
-    public function module (Request $request){
-
-        return view('setting.module');
-
+    public function indexModule()
+    {
+        $roles = InvRole::all();
+        $sysModules = SysModule::with('modules')->get(); 
+    
+        return view('setting.module', compact('roles', 'sysModules'));
+    }
+    public function store(Request $request)
+    {
+        foreach ($request->input('permissions', []) as $smId => $rolePermissions) {
+            foreach ($rolePermissions as $roleId => $status) {
+                $isEnabled = isset($status['enabled']) && $status['enabled'] === '1' ? '1' : '0';
+                Log::info('Updating permission:', [
+                    'SM_id' => $smId,
+                    'R_id' => $roleId,
+                    'status' => $isEnabled
+                ]);
+                Module::updateOrCreate(
+                    ['SM_id' => $smId, 'R_id' => $roleId],
+                    ['status' => $isEnabled]
+                );
+            }
+        }
+    
+        return redirect()->route('module.index')->with('success', 'Permissions updated successfully!');
     }
 
     //-----------------------------------------END MODULE SECTION-----------------------------------------

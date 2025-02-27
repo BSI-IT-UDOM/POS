@@ -38,7 +38,8 @@
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group " onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='/menu_group/destroy/{{$group->MenuGr_id}}'; }">
+                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group " 
+                  onclick="confirmDelete({{ $group->MenuGr_id }})">
                   <i class="fas fa-trash-alt fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" >Delete</span>
                 </button>
@@ -64,6 +65,7 @@
   @include('popups.edit-menuGroup-popup')
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
   document.getElementById('createMenuGr').addEventListener('click', function(event) {
@@ -121,6 +123,21 @@ function setHover(button, isHover) {
         button.style.backgroundColor = isHover ? '#a11' : '#f00';
         statusText.textContent = 'Inactive';
     }
+}
+function confirmDelete(MenuGr_id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/menu_group/destroy/${MenuGr_id}`;
+        }
+    });
 }
 </script>
 

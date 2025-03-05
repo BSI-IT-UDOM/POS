@@ -705,23 +705,28 @@ public function update(Request $request, $id)
     public function search(Request $request)
     {
         $searchTerm = $request->input('search');
-        $materials = Material::where('Material_Engname', 'LIKE', "%{$searchTerm}%")->get();
+        $materials = Material::where('Material_Engname', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('Material_Khname', 'LIKE', "%{$searchTerm}%")
+                            ->with('MaterialCategory')
+                            ->get();
         $output = '';
         foreach ($materials as $index => $data) {
             $rowClass = ($index % 2 === 0) ? 'bg-zinc-200' : 'bg-zinc-300';
             $borderClass = ($index === 0) ? 'border-t-4' : '';
             $output .= '
             <tr class="' . $rowClass . ' text-base ' . $borderClass . ' text-center border-white">
-                <td class="py-3 px-4 border border-white">' . ($data->iteration) . '</td>
-                <td class="py-3 px-4 border border-white">' . ($data->Material_Engname ?? 'null') . '</td>
+                <td class="py-3 px-4 border border-white">' . ($index + 1) . '</td>
+                <td class="py-3 px-4 border border-white">'.$data->Material_Khname . ' ' . $data->Material_Engname.'</td>
                 <td class="py-3 px-4 border border-white">' . ($data->MaterialCategory->Material_Cate_Engname ?? 'null') . '</td>
-                <td class="flex items-center justify-center py-3 px-4 border border-white"><img src="storage/' . $data->image . '" alt="Material Image" class="h-10 w-12 rounded"></td>
+                <td class="flex items-center justify-center py-3 px-4 border border-white">
+                    <img src="' . asset('storage/' . $data->image) . '" alt="Material Image" class="h-10 w-12 rounded">
+                </td>
                 <td class="py-3 border border-white">
                 </td>
             </tr>';
         }
         return response()->json(['html' => $output]);
-    }
+    } 
 }
 
 

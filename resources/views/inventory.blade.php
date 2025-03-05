@@ -56,6 +56,9 @@
             @endforeach
           </tbody>
         </table>
+        <div class="mt-2">
+          {{ $inventory->links() }} 
+        </div>
       </div>
     </div>
   </div>

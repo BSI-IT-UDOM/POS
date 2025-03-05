@@ -8,7 +8,7 @@
         <div class="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center w-full">
             <h3 class="text-xl font-semibold mb-2">{{ $data->Size_name }}</h3>
             <p class="text-gray-500 text-lg">{{ $data->Size_abb }}</p>
-            <div class="mt-auto w-full flex justify-end space-x-2">
+            <div class="mt-auto flex justify-end space-x-2">
                 <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" 
                     onclick="openEditPopup({{ $data->Size_id }}, '{{ $data->Size_name ?? 'null' }}','{{ $data->Size_abb ?? 'null'}}')">
                     <i class="fas fa-edit fa-xs"></i>

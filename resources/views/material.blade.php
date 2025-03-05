@@ -86,16 +86,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
-  $('#searchInput').keypress(function() {
-    var searchValue = $(this).val();
+$('#searchForm').submit(function(event) {
+    event.preventDefault(); 
+    var searchValue = $('#searchInput').val();
     $.ajax({
         url: '{{ route("material.search") }}',
         type: 'GET',
         data: { search: searchValue },
         success: function(response) {
-          $('#inventoryTableBody').html(response.html);
+            $('#inventoryTableBody').html(response.html);
         }
-      });
+    });
 });
 function openEditPopup(Material_id, Material_Khname, Material_Engname, Material_Cate_Khname, image) {
   document.getElementById('editMaterial_id').value = Material_id;

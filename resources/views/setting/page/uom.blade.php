@@ -8,7 +8,7 @@
         <div class="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center">
             <h3 class="text-xl font-semibold mb-2">{{ $data->UOM_name }}</h3>
             <p class="text-gray-500 text-lg">{{ $data->UOM_abb }}</p>
-            <div class="mt-auto flex justify-end w-full space-x-2">
+            <div class="mt-auto flex justify-end  space-x-2">
                 <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"  
                     onclick="openEditUOMPopup({{ $data->UOM_id }}, '{{ $data->UOM_name ?? 'null' }}','{{ $data->UOM_abb ?? 'null'}}')">
                     <i class="fas fa-edit fa-xs"></i>

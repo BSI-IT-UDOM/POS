@@ -61,8 +61,7 @@ class InventoryController extends Controller
 
         ->where('L_id', Auth::user()->invLocation->L_id)
 
-        ->get();
-
+        ->paginate(10);
         return view('inventory', compact('group', 'categories','inventory','Supplier','materials','uom','currency')); 
 
     }
@@ -212,43 +211,46 @@ class InventoryController extends Controller
     //search
 
     public function search(Request $request)
-
     {
-
         $searchTerm = $request->input('search');
-
-        $inventory = Inventory::where('Item_Name', 'LIKE', "%{$searchTerm}%")->get();
-
-
-
+    
+        $inventory = Inventory::where('Material_Khname', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('Material_Engname', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('Category', 'LIKE', "%{$searchTerm}%")
+            ->get();
+    
         $output = '';
-
-        foreach ($inventory as $data) {
-
-            $output .= '
-
-            <tr class="bg-zinc-200 text-base border-t-4 border-white">
-
-              <td class="py-3 px-4 border border-white">'.$data->MATERIAL_NAME.'</td>
-
-              <td class="py-3 px-4 border border-white">'.$data->CATEGORY.'</td>
-
-              <td class="py-3 px-4 border border-white">'.$data->TOTAL_ORDER.'</td>
-
-              <td class="py-3 px-4 border border-white">'.$data->TOTAL_IN_HAND.'</td>
-
-              <td class="py-3 px-4 border border-white">'.$data->UOM.'</td>
-
-              <td class="py-3 px-4 border border-white">'.$data->EXPIRY_DATE.'</td>
-
-            </tr>';
-
+    
+        if ($inventory->isEmpty()) {
+            return response()->json([
+                'html' => '
+                <tr>
+                    <td colspan="8" class="flex items-center justify-center h-48 w-full text-center">
+                        <div>
+                            <h2 class="text-gray-700 text-2xl font-bold">🚫 No Results Found</h2>
+                            <p class="text-gray-500 text-lg mt-2">Try searching with a different keyword.</p>
+                        </div>
+                    </td>
+                </tr>
+                '
+            ]);
+        } else {
+            foreach ($inventory as $data) {
+                $output .= '
+                <tr class="bg-zinc-200 text-base border-t-4 border-white">
+                    <td class="py-3 px-4 border border-white">'.$data->Material_Khname . ' ' . $data->Material_Engname.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->Category.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->old_stock_qty.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->old_stock_expiry_date.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->new_stock_qty.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->new_stock_expiry_date.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->Total_In_Hand.'</td>
+                    <td class="py-3 px-4 border border-white">'.$data->UOM.'</td>
+                </tr>';
+            }
         }
-
-
-
+    
         return response()->json(['html' => $output]);
-
     }
 
 }

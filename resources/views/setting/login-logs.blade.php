@@ -24,18 +24,19 @@
                     <td class="py-2 px-4 border-b">{{$data->mac_add}}</td>
                     <td class="py-2 px-4 border-b">{{$data->login_datetime}}</td>
                 </tr>
-            @endforeach
+                @endforeach
             </tbody>
         </table>
+
+        <!-- Pagination Information -->
         <div class="mt-4 flex justify-between items-center">
-            <span class="text-sm text-gray-600">Showing 1 to 10 of 50 entries</span>
+            <span class="text-sm text-gray-600">
+                Showing {{ $userLogs->firstItem() }} to {{ $userLogs->lastItem() }} of {{ $userLogs->total() }} entries
+            </span>
+
+            <!-- Pagination Controls -->
             <div class="inline-flex">
-                <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">
-                    Prev
-                </button>
-                <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
-                    Next
-                </button>
+                {{ $userLogs->links() }}
             </div>
         </div>
     </div>

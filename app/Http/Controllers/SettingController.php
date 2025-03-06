@@ -647,24 +647,22 @@ class SettingController extends Controller
 
     //CREATE NEW CURRENCY
 
-    public function createCurrency(Request $request){
-
+    public function createCurrency(Request $request)
+    {
+    
         $validatedData = $request->validate([
-
             'Currency_name' => 'required|string|max:255',
-
             'Currency_alias' => 'required|string|max:255',
-
         ]);
-
+    
+        // Add default status field
+        $validatedData['status'] = 'Active';
+    
         Currency::create($validatedData);
-
-        // Redirect or return response
-
+    
         return redirect()->back()->with('success', 'Currency added successfully!');
-
     }
-
+    
     //UPDATE EXISTING CURRENCY
 
     public function Currencyupdate(Request $request,$Currency_id)
@@ -3595,7 +3593,7 @@ class SettingController extends Controller
     //-----------------------------------------LOGIN LOGS SECTION-----------------------------------------
 
     public function login_logs (Request $request){
-        $userLogs=LoginInfo::all();
+        $userLogs = LoginInfo::paginate(10);
         return view('setting.login-logs',compact('userLogs'));
     }
 

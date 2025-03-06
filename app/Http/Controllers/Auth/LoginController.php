@@ -1,8 +1,11 @@
 <?php
 
+
+
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\LoginInfo;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +45,38 @@ class LoginController extends Controller
                 $this->username() => ['Your account is inactive. Please contact support.'],
             ]);
         }
-        return Auth::attempt($this->credentials($request));
+
+        if (Auth::attempt($this->credentials($request))) {
+            $this->storeLoginInfo($user, $request);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Store login information in the database.
+     *
+     * @param User $user
+     * @param Request $request
+     */
+    protected function storeLoginInfo($user, $request)
+    {
+
+        $loginInfo = new LoginInfo();
+        $loginInfo->U_id = $user->U_id;
+        $loginInfo->public_ip = $request->ip();
+        $loginInfo->mac_add = $this->getMacAddress();
+        $loginInfo->login_datetime = now();
+        $loginInfo->save();
+    }
+
+    /**
+     * Retrieve the MAC address of the user (example implementation).
+     * Note: This may require a custom approach based on your environment.
+     */
+    protected function getMacAddress()
+    {
+        return exec('getmac'); // For demonstration, ensure this suits your environment
     }
 }

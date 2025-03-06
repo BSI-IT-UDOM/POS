@@ -9,6 +9,7 @@
             <div class="mb-4">
                 <label for="UOM_name" class="block text-sm font-medium text-gray-900 mb-1">NAME</label>
                 <input type="text" id="UOM_name" name="UOM_name" class="text-center border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                
             </div>
             <div class="mb-4">
                 <label for="UOM_abb" class="block text-sm font-medium text-gray-900 mb-1">ALIAS</label>

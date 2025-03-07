@@ -9,14 +9,17 @@
             <h3 class="text-xl font-semibold mb-2">{{ $data->IPM_fullname }}</h3>
             <p class="text-gray-500 text-lg">{{ $data->IPM_alias }}</p>
             <div class="mt-auto flex justify-end space-x-2">
-            <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group "  onclick="openPaymentEditPopup({{ $data->IPM_id }}, '{{ $data->IPM_fullname ?? 'null' }}','{{ $data->IPM_alias ?? 'null'}}','{{ $data->paymentCate->PMCate_Khname ?? 'null'}}')">
+            <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group "  onclick="openPaymentEditPopup({{ $data->IPM_id }}, '{{ $data->IPM_fullname ?? 'null' }}','{{ $data->IPM_alias ?? 'null'}}','{{ $data->paymentCate->PMCate_Khname ?? 'null'}}','{{$data->image??'Null'}}')">
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
-                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group " onclick="if(confirm('{{ __('Are you sure you want to delete?') }}')) { window.location.href='payment/destroy/{{$data->IPM_id}}'; }">
-                  <i class="fas fa-trash-alt fa-xs"></i>
-                  <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" >Delete</span>
-                </button>
+                <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group" 
+                onclick="confirmDelete({{ $data->IPM_id }})">
+                <i class="fas fa-trash-alt fa-xs"></i>
+                <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
+                    Delete
+                </span>
+            </button>            
                 <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"
                   onclick="toggleActive(this, {{ $data->IPM_id }})"
                   onmouseover="setHover(this, true)"
@@ -36,8 +39,9 @@
     </div>
 </div>
     @include('popups.create-payment-popup')
-    @include('popups.edit-payment-popup')
 </div>
+@include('popups.edit-payment-popup')
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -46,12 +50,20 @@
         document.getElementById('createPaymentPopup').classList.remove('hidden');
     });
 
-    function openPaymentEditPopup(IPM_id, IPM_fullname, PMCate_Khname, IPM_alias) {
+    function openPaymentEditPopup(IPM_id, IPM_fullname, PMCate_Khname, IPM_alias, image) {
     document.getElementById('editIPM_id').value = IPM_id;
     document.getElementById('editIPM_fullname').value = IPM_fullname;
     document.getElementById('editIPM_alias').value = IPM_alias;
+    document.getElementById('editImage').value = image;
 
     document.getElementById('editPaymentForm').action = `/payment/${IPM_id}`;
+    let categorySelect = document.getElementById('editPMCate_id');
+    for (let option of categorySelect.options) {
+        if (option.text.includes(PMCate_Khname)) {
+            option.selected = true;
+            break;
+        }
+    }
     document.getElementById('editPaymentPopup').classList.remove('hidden');
 }
 
@@ -97,4 +109,20 @@ function setHover(button, isHover) {
         statusText.textContent = 'Inactive';
     }
 }
+function confirmDelete(IPM_id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/payment/destroy/${IPM_id}`;
+        }
+    });
+}
+
 </script>

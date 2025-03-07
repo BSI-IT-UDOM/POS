@@ -589,7 +589,7 @@ class SettingController extends Controller
 
         $UOM_id->save();
 
-        return redirect('/uom')->with('success', 'UOM Updated Successfully');
+        return redirect()->back()->with('success', 'UOM update successfully!');
 
     }
 
@@ -601,9 +601,11 @@ class SettingController extends Controller
 
         UOM::destroy($UOM_id);
 
-        return redirect('uom')->with('success', 'UOM Was deleted!');
 
-    }
+        return redirect()->back()->with('success', 'UOM Was deleted!');
+ 
+
+    }    
 
     //UOM TOGGLE STATUS
 
@@ -699,7 +701,8 @@ class SettingController extends Controller
 
         $Currency_id->save();
 
-        return redirect('/currency')->with('success', 'Currency Updated Successfully');
+        return redirect()->back()->with('success', 'Currency Updated Successfully');
+
 
     }
 
@@ -711,9 +714,11 @@ class SettingController extends Controller
 
         Currency::destroy($Currency_id);
 
-        return redirect('currency')->with('success', 'Currency Was Deleted!');
+        return redirect()->back()->with('success', 'Currency Was deleted!');
+
 
     }
+    
 
     //CURRENCY TOGGLE STATUS
 
@@ -762,74 +767,49 @@ class SettingController extends Controller
     //CREATE NEW PAYMENT METHOD
 
     public function createPayment(Request $request)
-
     {
-
         $validatedData = $request->validate([
-
             'IPM_fullname' => 'required|string|max:255',
-
             'IPM_alias' => 'required|string|max:255',
-
             'PMCate_id' => 'required|integer',
-
         ]);
-
+    
+        // Add default status
+        $validatedData['status'] = 'active';
+        $validatedData['image'] = 'Null';
         PaymentMethod::create($validatedData);
-
+    
         // Redirect or return response
-
         return redirect()->back()->with('success', 'Payment Method was created successfully!');
-
     }
+    
 
     //UPDATE EXISTING PAYMENT METHOD
 
-    public function Paymentupdate(Request $request,$IPM_id)
-
+    public function Paymentupdate(Request $request, $IPM_id)
     {
-
         // Validate the request data
-
         $validatedData = $request->validate([
-
             'IPM_fullname' => 'required|string|max:255',
-
             'IPM_alias' => 'required|string|max:255',
-
             'PMCate_id' => 'required|integer',
-
         ], [
-
             'IPM_fullname.required' => 'Payment Method Full Name Should Be Provided',
-
-            'IPM_alias.required' => 'Payment Method Full Name Should Be Provided',
-
-            'PMCate_id.required' => 'Help provide category for your payment method',
-
+            'IPM_alias.required' => 'Payment Method Alias Should Be Provided',
+            'PMCate_id.required' => 'Help provide a category for your payment method',
         ]);
+        $IPM_id = PaymentMethod::find($IPM_id);
 
-        // Find the Menu Group by ID
-
-        $IPM_id = invMenuCate::find($IPM_id);
-
-        // Update the Manu Group data
-
+    
         $IPM_id->IPM_fullname = $validatedData['IPM_fullname'];
-
         $IPM_id->IPM_alias = $validatedData['IPM_alias'];
-
         $IPM_id->PMCate_id = $validatedData['PMCate_id'];
-
-        // Save the changes
-
+    
         $IPM_id->save();
-
-        return redirect('/payment')->with('success', 'Payment Method Was Updated Successfully');
-
+    
+        return redirect()->back()->with('success', 'Payment Method Was Updated Successfully');
     }
-
-    //DELETE EXISTING PAYMENT METHOD
+    
 
     public function Paymentdestroy($IPM_id)
 
@@ -837,7 +817,8 @@ class SettingController extends Controller
 
         PaymentMethod::destroy($IPM_id);
 
-        return redirect('payment_method')->with('success', 'Payment Method Was Deleted!');
+        return redirect()->back()->with('success', 'Payment Method Was Deleted!');
+
 
     }
 
@@ -1059,7 +1040,8 @@ class SettingController extends Controller
 
         $Size_id->save();
 
-        return redirect('/size')->with('success', 'Size Updated Successfully');
+        return redirect()->back()->with('success', 'Size Updated Successfully');
+        
 
     }
 
@@ -1071,8 +1053,7 @@ class SettingController extends Controller
 
         invSize::destroy($Size_id);
 
-        return redirect('size')->with('success', 'Size Was Deleted!');
-
+        return redirect()->back()->with('success', 'Size Was Deleted!');
     }
 
     //SIZE TOGGLE STATUS

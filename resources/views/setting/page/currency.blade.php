@@ -12,7 +12,7 @@
             <button class="relative bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group "  onclick="openCurrencyEditPopup({{ $data->Currency_id }}, '{{ $data->Currency_name ?? 'null' }}','{{ $data->Currency_alias ?? 'null'}}')">
                   <i class="fas fa-edit fa-xs"></i>
                   <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
-                </button>
+            </button>
                 <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"
                     onclick="deleteCurrency({{ $data->Currency_id }})">
                     <i class="fas fa-trash-alt fa-xs"></i>
@@ -40,52 +40,25 @@
         <a href="#" id="createCurrencyButton" class="bg-primary text-primary-foreground py-2 px-4 rounded-md text-xs inline-block"><i class="fas fa-plus mr-2"></i>CREATE</a>
     </div>
 </div>
-    @include('popups.create-currency-popup')
-    @include('popups.edit-currency-popup')
+@include('popups.create-currency-popup')
 </div>
+@include('popups.edit-currency-popup')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script>
-    function deleteCurrency(currencyId) {
+function deleteCurrency(currencyId) {
     Swal.fire({
-        title: 'Are you sure?',
+        title: "Are you sure?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`/currency/destroy/${currencyId}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire(
-                        'Deleted!',
-                        'Currency has been deleted.',
-                        'success'
-                    ).then(() => {
-                        location.reload(); // Refresh page after deletion
-                    });
-                } else {
-                    Swal.fire(
-                        'Error!',
-                        'There was an issue deleting the currency.',
-                        'error'
-                    );
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error!', 'Something went wrong.', 'error');
-            });
+            window.location.href = `/currency/destroy/${currencyId}`;
         }
     });
 }

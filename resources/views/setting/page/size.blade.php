@@ -15,7 +15,7 @@
                     <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Edit</span>
                 </button>
                 <button class="relative bg-red-500 hover:bg-red-600 active:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none transition duration-150 ease-in-out group"
-                    onclick="confirmDelete({{ $data->Size_id }})">
+                    onclick="confirmDeleteSize({{ $data->Size_id }})">
                     <i class="fas fa-trash-alt fa-xs"></i>
                     <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">Delete</span>
                 </button>
@@ -54,21 +54,6 @@
         document.getElementById('editSize_abb').value = Size_abb;
         document.getElementById('editSizeForm').action = `/size/${Size_id}`;
         document.getElementById('editSizePopup').classList.remove('hidden');
-    }
-    function confirmDelete(sizeId) {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = `/size/destroy/${sizeId}`;
-            }
-        });
     }
 
     function toggleActive(button, SizeId) {
@@ -112,5 +97,21 @@
             button.style.backgroundColor = isHover ? '#a11' : '#f00';
             statusText.textContent = 'Inactive';
         }
+    }
+    
+    function confirmDeleteSize(sizeId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/size/destroy/${sizeId}`;
+            }
+        });
     }
 </script>

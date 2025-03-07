@@ -1,4 +1,4 @@
-<div id="editUOMPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+<div id="editUOMPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-20">
     <div class="bg-white rounded-lg w-1/2">
         <div class="bg-gradient-to-b from-blue-500 to-blue-400 rounded-t-lg px-6 py-4">
             <h2 class="text-2xl font-bold text-white mb-2">EDIT UOM</h2>

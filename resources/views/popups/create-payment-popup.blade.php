@@ -46,7 +46,7 @@
 
                 <label for="PMCate_id" class="block text-sm font-medium text-gray-900 mb-1">CATEGORY</label>
 
-                <select id="PMCate_id" name="PMCate_id" class="text-center border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 @error('PMCate_id') is-invalid @enderror" onchange="handleSelect(event)" required>
+                <select id="PMCate_id" name="PMCate_id" class="text-center border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 @error('PMCate_id') is-invalid @enderror" onchange="showCreatePopup()" required>
 
                     <option value="" disabled selected>-- CATEGORY --</option>
 
@@ -123,12 +123,23 @@
         }
 
     }
+    function showCreatePopup() {
 
-    function handleSelect(event) {
+        var selectedValue = document.getElementById('PMCate_id').value;
 
-        var selectedValue = event.target.value;
 
-        togglePopup('createPaymentCatePopup');
+
+        if (selectedValue === 'createPaymentCategory') {
+
+            togglePopup('createPaymentCatePopup');
+
+        } else {
+
+            const popup = document.getElementById('createPaymentCatePopup');
+
+            popup.classList.add('hidden');
+
+        }
 
     }
 

@@ -18,6 +18,7 @@ class PaymentMethod extends Model
         'IPM_fullname',
         'IPM_alias',
         'PMCate_id',
+        'image',
         'status'
     ];
     public function paymentCate()
